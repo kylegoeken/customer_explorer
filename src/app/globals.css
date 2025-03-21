@@ -123,14 +123,20 @@
 
 @font-face {
   font-family: 'FS Koopman';
-  src: url('/fonts/FSKoopman-Regular.woff2') format('woff2');
+  src: url('/fonts/FSKoopman-Regular.woff2') format('woff2'),
+       url('/fonts/FSKoopman-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'FS Koopman';
-  src: url('/fonts/FSKoopman-Bold.woff2') format('woff2');
+  src: url('/fonts/FSKoopman-Bold.woff2') format('woff2'),
+       url('/fonts/FSKoopman-Bold.woff') format('woff');
   font-weight: bold;
   font-style: normal;
+}
+
+body {
+  font-family: 'FS Koopman', sans-serif;
 }

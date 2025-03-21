@@ -4,25 +4,27 @@ import './globals.css'
 
 export default function Home() {
   return (
-    <main className="bg-[#F7F6FB] min-h-screen font-[FS_Koopman]">
-      <div className="container mx-auto py-6 px-4">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="relative w-[200px] h-[48px]">
+    <main className="font-['FS_Koopman']">
+      {/* Header */}
+      <header className="w-full bg-white border-b border-gray-200 pt-4">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center h-16">
             <Image 
               src="/logo.png"
-              alt="LiveOakBank Logo" 
-              fill
-              style={{ objectFit: 'contain' }}
+              alt="Company Logo" 
+              width={160} 
+              height={36} 
               priority
             />
+            <div className="h-6 w-px bg-gray-200 mx-6"></div>
+            <h1 className="text-2xl font-bold text-[#1C0E52] font-['FS_Koopman']">Customer Explorer</h1>
           </div>
-          <div className="text-gray-300 text-3xl font-light">|</div>
-          <h1 className="text-3xl font-bold text-[#1C0E52]">Customer Explorer</h1>
         </div>
-        
-        <div key="explorer-wrapper">
-          <CustomerExplorer />
-        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-6 py-8">
+        <CustomerExplorer />
       </div>
     </main>
   )

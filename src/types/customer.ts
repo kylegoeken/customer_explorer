@@ -1,4 +1,4 @@
-export type ConnectionType = 'Same Organization' | 'Business Partner' | 'Vendor' | 'Family Member'
+export type ConnectionType = "Same Organization" | "Business Partner" | "Vendor" | "Guarantor" | "Organization Member"
 
 export interface Connection {
   type: ConnectionType
@@ -8,6 +8,7 @@ export interface Connection {
 
 export interface Customer {
   id: string
+  customerId: string
   name: string
   email: string
   phone: string
@@ -15,5 +16,7 @@ export interface Customer {
   organization: string
   accountNumber: string
   status: string
-  connections?: Connection[]
+  creditScore: number
+  tin: string
+  connections: Connection[]
 } 

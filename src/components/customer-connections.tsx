@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import type { Customer, Connection } from "@/types/customer"
 import { Card, CardContent } from "@/components/ui/card"
 import { findCustomerConnections } from "@/lib/connections"
-import { Network, Search, Filter, ChevronDown, Share2 } from "lucide-react"
+import { Network, Search, Filter, ChevronDown } from "lucide-react"
 
 interface CustomerConnectionsProps {
   customer: Customer
@@ -16,7 +16,7 @@ interface ConnectionWithCustomer extends Connection {
   connectedCustomer?: Customer
 }
 
-export function CustomerConnections({ customer, allCustomers, onSelectCustomer }: CustomerConnectionsProps) {
+export default function CustomerConnections({ customer, allCustomers, onSelectCustomer }: CustomerConnectionsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState("")
@@ -155,37 +155,14 @@ export function CustomerConnections({ customer, allCustomers, onSelectCustomer }
     }
   }, [customer, connections, allCustomers, onSelectCustomer])
 
-  const handleShare = async () => {
-    // Create URL with customer ID as query parameter
-    const url = new URL(window.location.href)
-    url.searchParams.set('customer', customer.id)
-    
-    try {
-      await navigator.clipboard.writeText(url.toString())
-      // You might want to add a toast notification here to show success
-      alert('Link copied to clipboard!')
-    } catch (err) {
-      console.error('Failed to copy link:', err)
-      alert('Failed to copy link')
-    }
-  }
-
   return (
-    <div key={customer.id} className="space-y-6">
-      {/* Update header to include share button */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      {/* Header with count */}
+      <div className="flex items-center">
         <div className="flex items-center gap-2 text-[#71717A]">
           <Network className="h-4 w-4" />
           <span>{connections.length} connections found</span>
         </div>
-        <button
-          onClick={handleShare}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm border border-[#E4E4E7] rounded-lg
-            hover:border-[#1C0E52] transition-colors bg-white text-[#71717A] hover:text-[#1C0E52]"
-        >
-          <Share2 className="h-4 w-4" />
-          Share
-        </button>
       </div>
 
       {/* Search and Filter Bar */}
@@ -213,15 +190,17 @@ export function CustomerConnections({ customer, allCustomers, onSelectCustomer }
           >
             <option value="">All Types</option>
             <option value="Same Organization">Same Organization</option>
+            <option value="Organization Member">Organization Member</option>
             <option value="Business Partner">Business Partner</option>
             <option value="Vendor">Vendor</option>
+            <option value="Guarantor">Guarantor</option>
           </select>
         </div>
       </div>
 
       {/* Main content area */}
       <div className="space-y-6">
-        {/* Network Visualization - fixed height */}
+        {/* Network Visualization */}
         <div className="border rounded-lg overflow-hidden bg-white">
           <canvas 
             ref={canvasRef} 
@@ -231,7 +210,7 @@ export function CustomerConnections({ customer, allCustomers, onSelectCustomer }
           />
         </div>
 
-        {/* Connection Details - fixed height */}
+        {/* Connection Details */}
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-[#1C0E52] flex items-center gap-2">
             Connection Details
@@ -247,46 +226,28 @@ export function CustomerConnections({ customer, allCustomers, onSelectCustomer }
               No connections match your search criteria.
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-6">
-              {filteredConnections.map((connection, index) => (
-                <Card 
-                  key={index} 
-                  className="hover:shadow-md transition-shadow cursor-pointer"
-                  onClick={() => {
-                    const connectedCustomer = allCustomers.find(c => c.id === connection.customerId)
-                    if (connectedCustomer) {
-                      onSelectCustomer(connectedCustomer)
-                    }
-                  }}
-                >
-                  <CardContent className="p-5">
-                    <div className="flex justify-between items-start gap-3">
-                      <div className="min-w-0 flex-1">
-                        <h4 className="font-medium text-[#1C0E52] hover:text-[#2d1875] transition-colors cursor-pointer truncate">
-                          {connection.connectedCustomer?.name}
-                        </h4>
-                        <p className="text-sm text-[#71717A] truncate">{connection.connectedCustomer?.organization}</p>
-                      </div>
-                      <div className="flex-shrink-0">
-                        <span className="inline-block px-3 py-1 bg-[#F7F6FB] text-[#1C0E52] 
-                          rounded-full text-xs font-medium hover:bg-[#E4E4E7] transition-colors cursor-default">
-                          {connection.type}
-                        </span>
-                      </div>
+            <div className="grid gap-4">
+              {filteredConnections.map((connection) => {
+                const connectedCustomer = allCustomers.find(c => c.id === connection.customerId)
+                if (!connectedCustomer) return null
+
+                return (
+                  <Card 
+                    key={connection.customerId}
+                    className="p-4 cursor-pointer hover:border-[#1C0E52] transition-colors"
+                    onClick={() => onSelectCustomer(connectedCustomer)}
+                  >
+                    <span className="inline-block px-3 py-1 text-sm rounded-full bg-[#F7F6FB] text-[#1C0E52] mb-3">
+                      {connection.type}
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-medium">{connectedCustomer.name}</h3>
+                      <p className="text-gray-500 text-sm">{connectedCustomer.organization}</p>
+                      <p className="text-gray-600 text-sm mt-2">{connection.description}</p>
                     </div>
-                    <p className="text-sm mt-3 text-[#71717A] line-clamp-2">{connection.description}</p>
-                    <div className="mt-4 flex gap-2">
-                      <button className="text-sm text-[#1C0E52] hover:text-[#2d1875] transition-colors">
-                        View Details
-                      </button>
-                      <span className="text-[#E4E4E7]">|</span>
-                      <button className="text-sm text-[#1C0E52] hover:text-[#2d1875] transition-colors">
-                        Contact
-                      </button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                  </Card>
+                )
+              })}
             </div>
           )}
         </div>

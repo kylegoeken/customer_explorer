@@ -1,42 +1,60 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import CustomerInfo from "@/components/customer-info"
+import CustomerConnections from "@/components/customer-connections"
 import type { Customer } from "@/types/customer"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CustomerInfo } from "@/components/customer-info"
-import { CustomerConnections } from "@/components/customer-connections"
-import { User } from "lucide-react"
 
 interface CustomerDetailProps {
   customer: Customer
   allCustomers: Customer[]
+  onSelectCustomer: (customer: Customer) => void
 }
 
-export function CustomerDetail({ customer, allCustomers }: CustomerDetailProps) {
+export default function CustomerDetail({ customer, allCustomers, onSelectCustomer }: CustomerDetailProps) {
+  if (!customer) return null
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-xl flex items-center">
-          <User className="h-5 w-5 mr-2" />
-          {customer.name}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="info" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="info">Customer Info</TabsTrigger>
-            <TabsTrigger value="connections">Connections</TabsTrigger>
+    <Card className="p-4">
+      <Tabs defaultValue="info">
+        <div className="bg-[#F7F6FB] p-1 rounded-lg mb-4">
+          <TabsList className="grid w-full grid-cols-2 !bg-transparent !p-0 gap-1">
+            <TabsTrigger 
+              value="info"
+              className="rounded-md px-6 py-2 text-[#71717A] 
+                data-[state=active]:bg-[#1C0E52] 
+                data-[state=active]:text-white 
+                transition-colors"
+            >
+              Customer Info
+            </TabsTrigger>
+            <TabsTrigger 
+              value="connections"
+              className="rounded-md px-6 py-2 text-[#71717A] 
+                data-[state=active]:bg-[#1C0E52] 
+                data-[state=active]:text-white 
+                transition-colors"
+            >
+              Connections
+            </TabsTrigger>
           </TabsList>
-          
+        </div>
+
+        <div className="mt-4">
           <TabsContent value="info">
             <CustomerInfo customer={customer} />
           </TabsContent>
-          
+
           <TabsContent value="connections">
-            <CustomerConnections customer={customer} allCustomers={allCustomers} />
+            <CustomerConnections 
+              customer={customer} 
+              allCustomers={allCustomers} 
+              onSelectCustomer={onSelectCustomer}
+            />
           </TabsContent>
-        </Tabs>
-      </CardContent>
+        </div>
+      </Tabs>
     </Card>
   )
 }
